@@ -477,7 +477,7 @@ class ChordApp:
         if self.play_thread and self.play_thread.is_alive():
             self.play_thread.join(timeout=1.0)
         midi.close()
-        self.root.destroy()
+        self.root.destroy() 
 
 def main():
     root = tb.Window(themename="darkly")
