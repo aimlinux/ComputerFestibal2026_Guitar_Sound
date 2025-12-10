@@ -14,7 +14,7 @@
 作成者: KAZUMA KOHARA (改良版)
 """
 
-import json
+import json 
 import os
 import random
 import threading
