@@ -1,6 +1,6 @@
 # improved_chord_generator_complete.py
 """
-おしゃれで完成版のギターコード進行ジェネレータ（1ファイル）
+おしゃれで完成版のギターコード進行ジェネレータ
 - ttkbootstrap を使ったモダンUI
 - MIDI 出力（pygame.midi）で進行を再生
 - コードのインバージョン、オクターブ、ベロシティ、ヒューマナイズ対応
@@ -10,8 +10,6 @@
 使い方:
     pip install pygame ttkbootstrap
     python improved_chord_generator_complete.py
-
-作成者: KAZUMA KOHARA (改良版)
 """
 
 import json 
