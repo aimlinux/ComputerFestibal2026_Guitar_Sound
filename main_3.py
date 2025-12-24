@@ -452,7 +452,7 @@ class ChordApp:
             messagebox.showinfo('Info', 'まずGenerateで進行を生成してください。')
             return
         if self.play_thread and self.play_thread.is_alive():
-            messagebox.showinfo('Info', '既に再生中です。')
+            messagebox.showinfo('Info', '既に再生中です。') 
             return
         self.play_flag.set()
         self.play_thread = threading.Thread(target=self.play_progression_loop, daemon=True)
