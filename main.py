@@ -172,6 +172,7 @@ def on_generate():
             chord_buttons_frame,
             text=chord,
             width=8,
+            width=8,
             bootstyle="success-outline",
             command=lambda c=chord: play_chord(c)
         )
