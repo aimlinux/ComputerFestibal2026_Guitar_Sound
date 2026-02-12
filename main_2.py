@@ -367,8 +367,19 @@ class ChordApp:
             print("play error:", e)
 
     def ensure_midi_open(self):
-        # open chosen device if selected
+        # MIDIデバイスを一度だけ開く。
+        # 既に開いている場合は再度開かない。
+        if midi.output is not None:
+            return  # already opened
+        
         self.midi_choice = self.midi_var.get()
+
+        devs = midi.list_devices()
+        outputs = [i for (i, name, is_out) in devs if is_out]
+
+        if not outputs:
+            return
+        
         if self.midi_choice == "(Auto)":
             # try device 0 if exists
             devs = midi.list_devices()
@@ -396,7 +407,7 @@ class ChordApp:
             messagebox.showinfo("Info", "既に再生中です。")
             return
         self.play_flag.set()
-        self.play_thread = threading.Thread(target=self.play_progression_loop, daemon=True)
+        self.play_thread = threading.Thread(target=self._loop, daemon=True)
         self.play_thread.start()
 
     def on_stop(self):
