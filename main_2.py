@@ -481,7 +481,25 @@ class ChordApp:
 def main():
     root = tb.Window(themename="darkly")
     root.title("Guitar Chord Progression Generator (Improved)")
-    root.geometry("900x700")
+
+    # 画面サイズ取得
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    #　画面の80%のサイズにウィンドウを設定
+    window_width = int(screen_width * 0.8)
+    window_height = int(screen_height * 0.8)
+
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2
+    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    
+    #window最小サイズ設定
+    root.minsize(800, 600)
+    
+    #サイズ変更可能にする
+    root.resizable(True, True)
+
     app = ChordApp(root)
     root.protocol("WM_DELETE_WINDOW", app.on_close)
     root.mainloop()
