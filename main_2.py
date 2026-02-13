@@ -8,6 +8,10 @@ import threading
 import ttkbootstrap as tb
 from ttkbootstrap.constants import * 
 from collections import OrderedDict
+import cv2
+from PIL import Image, ImageTk
+import os
+
 
 # ---------- データ定義 ----------
 DIATONIC_MAJOR = {
@@ -243,35 +247,86 @@ class TitleScreen:
         self.frame = tb.Frame(root)
         self.frame.pack(fill="both", expand=True)
 
+        # ===== 動画設定 =====
+        BASE_DIR = os.path.dirname(__file__)
+        VIDEO_PATH = os.path.join(BASE_DIR, "assets", "video", "title.mp4")
+
+        self.cap = cv2.VideoCapture(VIDEO_PATH)
+
+        self.video_label = tk.Label(self.frame)
+        self.video_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # 動画再生開始
+        self.update_frame()
+
+        # ===== タイトルテキスト =====
         title = tb.Label(
             self.frame,
             text="🎸 Guitar Chord Generator 🎸",
-            font=("Segoe UI", 32, "bold"),
-            bootstyle="info"
+            font=("Segoe UI", 50, "bold"),
+            bootstyle="light"
         )
-        title.pack(pady=80)
+        title.place(relx=0.5, rely=0.3, anchor="center")
 
         subtitle = tb.Label(
             self.frame,
             text="Create Beautiful Progressions",
-            font=("Segoe UI", 16),
+            font=("Segoe UI", 30),
             bootstyle="secondary"
         )
-        subtitle.pack(pady=10)
+        subtitle.place(relx=0.5, rely=0.4, anchor="center")
 
         start_btn = tb.Button(
             self.frame,
             text="Start",
             bootstyle="success",
-            width=20,
+            width=30,
             command=self.start
         )
-        start_btn.pack(pady=40)
+        start_btn.place(relx=0.5, rely=0.6, anchor="center")
+
+        exit_btn = tb.Button(
+            self.frame,
+            text="Exit",
+            bootstyle="danger",
+            width=30,
+            command=self.exit
+        )
+        exit_btn.place(relx=0.5, rely=0.7, anchor="center")
+
+    def update_frame(self):
+        if not self.cap.isOpened():
+            return
+
+        ret, frame = self.cap.read()
+
+        if not ret:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            w = self.root.winfo_width()
+            h = self.root.winfo_height()
+            frame = cv2.resize(frame, (w, h))
+
+            img = Image.fromarray(frame)
+            imgtk = ImageTk.PhotoImage(image=img)
+
+            self.video_label.imgtk = imgtk
+            self.video_label.configure(image=imgtk)
+
+        self.root.after(30, self.update_frame)
 
     def start(self):
+        self.cap.release()
         self.frame.destroy()
         self.start_callback()
 
+    def exit(self):
+        self.cap.release()
+        self.root.destroy()
 
 # ---------- GUI ----------
 class ChordApp:
