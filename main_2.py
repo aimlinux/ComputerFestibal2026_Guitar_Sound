@@ -249,7 +249,7 @@ class TitleScreen:
 
         # ===== 動画設定 =====
         BASE_DIR = os.path.dirname(__file__)
-        VIDEO_PATH = os.path.join(BASE_DIR, "assets", "video", "title.mp4")
+        VIDEO_PATH = os.path.join(BASE_DIR, "video.mp4")
 
         self.cap = cv2.VideoCapture(VIDEO_PATH)
 
