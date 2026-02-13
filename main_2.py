@@ -325,8 +325,75 @@ class TitleScreen:
         self.start_callback()
 
     def exit(self):
-        self.cap.release()
-        self.root.destroy()
+        self.show_exit_dialog()
+
+    def show_exit_dialog(self):
+
+        # 🔥 オーバーレイ（背景暗くする）
+        overlay = tk.Toplevel(self.root)
+        overlay.overrideredirect(True)
+        overlay.geometry(f"{self.root.winfo_width()}x{self.root.winfo_height()}+{self.root.winfo_rootx()}+{self.root.winfo_rooty()}")
+        overlay.configure(bg="black")
+        overlay.attributes("-alpha", 0.0)
+        overlay.lift()
+        overlay.grab_set()
+
+        # フェードイン（暗転）
+        def fade_overlay(alpha=0):
+            if alpha <= 0.5:
+                overlay.attributes("-alpha", alpha)
+                overlay.after(20, lambda: fade_overlay(alpha + 0.05))
+
+        fade_overlay()
+
+        # 🔥 ダイアログ本体
+        dialog = tb.Frame(overlay, padding=30, bootstyle="dark")
+        dialog.place(relx=0.5, rely=0.5, anchor="center")
+        dialog.attributes = overlay.attributes  # 透明度共有
+
+        # サウンド再生
+        try:
+            pygame.mixer.Sound("confirm.wav").play()
+        except:
+            pass
+
+        # メッセージ
+        icon = tb.Label(dialog, text="⚠", font=("Segoe UI", 50), bootstyle="warning")
+        icon.pack(pady=10)
+
+        msg = tb.Label(dialog, text="ゲームを終了しますか？", font=("Segoe UI", 16))
+        msg.pack(pady=10)
+
+        btn_frame = tb.Frame(dialog)
+        btn_frame.pack(pady=10)
+
+        # 最初は非表示
+        btn_frame.pack_forget()
+
+        def confirm():
+            # self.play_flag.clear()
+            # midi.close()
+            # overlay.destroy()
+            self.root.destroy()
+            print("")
+            print("-------- Exit App --------")
+            print("")
+
+        def cancel():
+            overlay.destroy()
+
+        exit_btn = tb.Button(btn_frame, text="Exit", bootstyle="danger", width=12, command=confirm)
+        cancel_btn = tb.Button(btn_frame, text="Cancel", bootstyle="secondary-outline", width=12, command=cancel)
+
+        cancel_btn.pack(side="left", padx=10)
+        exit_btn.pack(side="left", padx=10)
+
+        # 🔥 ボタン遅れて出現
+        def show_buttons():
+            btn_frame.pack(pady=20)
+
+        overlay.after(400, show_buttons)
+
 
 # ---------- GUI ----------
 class ChordApp:
@@ -577,12 +644,82 @@ class ChordApp:
             messagebox.showerror("Error", f"保存に失敗しました: {e}")
 
     def on_close(self):
-        # stop thread and close midi
-        self.play_flag.clear()
-        if self.play_thread and self.play_thread.is_alive():
-            self.play_thread.join(timeout=1.0)
-        midi.close()
-        self.root.destroy()
+        self.show_exit_dialog()
+        # # stop thread and close midi
+        # self.play_flag.clear()
+        # if self.play_thread and self.play_thread.is_alive():
+        #     self.play_thread.join(timeout=1.0)
+        # midi.close()
+        # self.root.destroy()
+
+
+    def show_exit_dialog(self):
+
+        # 🔥 オーバーレイ（背景暗くする）
+        overlay = tk.Toplevel(self.root)
+        overlay.overrideredirect(True)
+        overlay.geometry(f"{self.root.winfo_width()}x{self.root.winfo_height()}+{self.root.winfo_rootx()}+{self.root.winfo_rooty()}")
+        overlay.configure(bg="black")
+        overlay.attributes("-alpha", 0.0)
+        overlay.lift()
+        overlay.grab_set()
+
+        # フェードイン（暗転）
+        def fade_overlay(alpha=0):
+            if alpha <= 0.5:
+                overlay.attributes("-alpha", alpha)
+                overlay.after(20, lambda: fade_overlay(alpha + 0.05))
+
+        fade_overlay()
+
+        # 🔥 ダイアログ本体
+        dialog = tb.Frame(overlay, padding=30, bootstyle="dark")
+        dialog.place(relx=0.5, rely=0.5, anchor="center")
+        dialog.attributes = overlay.attributes  # 透明度共有
+
+        # サウンド再生
+        try:
+            pygame.mixer.Sound("confirm.wav").play()
+        except:
+            pass
+
+        # メッセージ
+        icon = tb.Label(dialog, text="⚠", font=("Segoe UI", 50), bootstyle="warning")
+        icon.pack(pady=10)
+
+        msg = tb.Label(dialog, text="ゲームを終了しますか？", font=("Segoe UI", 16))
+        msg.pack(pady=10)
+
+        btn_frame = tb.Frame(dialog)
+        btn_frame.pack(pady=10)
+
+        # 最初は非表示
+        btn_frame.pack_forget()
+
+        def confirm():
+            self.play_flag.clear()
+            midi.close()
+            overlay.destroy()
+            self.root.destroy()
+            print("")
+            print("-------- Exit App --------")
+            print("")
+
+        def cancel():
+            overlay.destroy()
+
+        exit_btn = tb.Button(btn_frame, text="Exit", bootstyle="danger", width=12, command=confirm)
+        cancel_btn = tb.Button(btn_frame, text="Cancel", bootstyle="secondary-outline", width=12, command=cancel)
+
+        cancel_btn.pack(side="left", padx=10)
+        exit_btn.pack(side="left", padx=10)
+
+        # 🔥 ボタン遅れて出現
+        def show_buttons():
+            btn_frame.pack(pady=20)
+
+        overlay.after(400, show_buttons)
+
 
 def main():
     root = tb.Window(themename="darkly")
