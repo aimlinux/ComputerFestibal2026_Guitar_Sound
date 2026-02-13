@@ -233,6 +233,46 @@ class MidiManager:
 
 midi = MidiManager()
 
+
+# ---------- タイトル画面 ----------
+class TitleScreen:
+    def __init__(self, root, start_callback):
+        self.root = root
+        self.start_callback = start_callback
+
+        self.frame = tb.Frame(root)
+        self.frame.pack(fill="both", expand=True)
+
+        title = tb.Label(
+            self.frame,
+            text="🎸 Guitar Chord Generator 🎸",
+            font=("Segoe UI", 32, "bold"),
+            bootstyle="info"
+        )
+        title.pack(pady=80)
+
+        subtitle = tb.Label(
+            self.frame,
+            text="Create Beautiful Progressions",
+            font=("Segoe UI", 16),
+            bootstyle="secondary"
+        )
+        subtitle.pack(pady=10)
+
+        start_btn = tb.Button(
+            self.frame,
+            text="Start",
+            bootstyle="success",
+            width=20,
+            command=self.start
+        )
+        start_btn.pack(pady=40)
+
+    def start(self):
+        self.frame.destroy()
+        self.start_callback()
+
+
 # ---------- GUI ----------
 class ChordApp:
     def __init__(self, root):
@@ -511,8 +551,14 @@ def main():
     #サイズ変更可能にする
     root.resizable(True, True)
 
-    app = ChordApp(root)
-    root.protocol("WM_DELETE_WINDOW", app.on_close)
+
+    # タイトル画面 → メイン画面切り替え
+    def start_main():
+        app = ChordApp(root)
+        root.protocol("WM_DELETE_WINDOW", app.on_close)
+
+    TitleScreen(root, start_main)
+
     root.mainloop()
 
 if __name__ == "__main__":
