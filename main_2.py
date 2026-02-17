@@ -14,6 +14,7 @@ from PIL import Image, ImageTk
 import os
 import sys 
 import pyautogui
+import json
 
 url = "github.com/aimlinux/Guitar_Sound"
 
@@ -247,6 +248,9 @@ class TitleScreen:
     def __init__(self, root, start_callback):
         self.root = root
         self.start_callback = start_callback
+        # テーマ変更に必要
+        self.theme_var = tk.StringVar(value=self.root.style.theme.name) # テーマ管理用（TkinterのStringVarでリアクティブに）
+
 
         self.frame = tb.Frame(root)
         self.frame.pack(fill="both", expand=True)
@@ -345,19 +349,87 @@ class TitleScreen:
 
         self.root.after(30, self.update_frame)
 
+    # ----スタートボタンを押したときの処理----
     def start(self):
         self.cap.release()
         self.frame.destroy()
         self.start_callback()
 
+    #----オプションボタンを押したときの処理----
     def open_options(self):
-        messagebox.showinfo("Options", "オプションは現在利用できません。")
+        """
+        オプション設定ウィンドウ
+        """
+        option_win = tb.Toplevel(self.root)
+        option_win.title("Options")
+        option_win.geometry("800x600")
+        option_win.grab_set()
 
+        frame = tb.Frame(option_win, padding=20)
+        frame.pack(fill="both", expand=True)
+
+        tb.Label(
+            frame,
+            text="⚙ Options",
+            font=("Segoe UI", 18, "bold"),
+            bootstyle="info"
+        ).pack(pady=10)
+
+        # ===== サンプル設定 =====
+        tb.Label(frame, text="（ここに設定項目を追加できます）").pack(pady=10)
+
+        # 例：BGM音量（ダミー）
+        tb.Label(frame, text="BGM Volume").pack(anchor="w", pady=(10, 0))
+        volume_var = tk.DoubleVar(value=0.5)
+        tb.Scale(
+            frame,
+            from_=0,
+            to=1,
+            orient="horizontal",
+            variable=volume_var,
+            bootstyle="info"
+        ).pack(fill="x", pady=5)
+
+        # =============================
+        # 🎨 テーマ変更
+        # =============================
+        tb.Label(frame, text="UI Theme").pack(anchor="w", pady=(15, 0))
+
+        themes = self.root.style.theme_names()
+
+        theme_combo = tb.Combobox(
+            frame,
+            values=themes,
+            textvariable=self.theme_var,
+            state="readonly",
+            bootstyle="info"
+        )
+        theme_combo.pack(fill="x", pady=5)
+
+        def on_theme_change(event):
+            self.change_theme(self.theme_var.get())
+
+        theme_combo.bind("<<ComboboxSelected>>", on_theme_change)
+
+
+        tb.Button(
+            frame,
+            text="Close",
+            bootstyle="secondary",
+            command=option_win.destroy
+        ).pack(pady=20)
+
+
+
+
+    #----ダウンロードボタンを押したときの処理----
     def download_program(self):
         webbrowser.open(url)
 
+    #----Exitボタンを押したときの処理----
     def exit(self):
         self.show_exit_dialog()
+
 
     def show_exit_dialog(self):
 
@@ -425,6 +497,16 @@ class TitleScreen:
             btn_frame.pack(pady=20)
 
         overlay.after(400, show_buttons)
+
+    def change_theme(self, theme_name):
+        """
+        テーマをリアルタイム変更
+        """
+        try:
+            self.root.style.theme_use(theme_name)
+        except Exception as e:
+            print("テーマ変更失敗:", e)
+
 
 
 # ---------- GUI ----------
@@ -754,7 +836,7 @@ class ChordApp:
 
 
 def main():
-    root = tb.Window(themename="darkly")
+    root = tb.Window(themename="darkly") #初期テーマ
     root.title("Guitar Chord Progression Generator (Improved)")
 
     # 画面サイズ取得
