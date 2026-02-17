@@ -425,7 +425,6 @@ class TitleScreen:
 
 
 
-
     #----ダウンロードボタンを押したときの処理----
     def download_program(self):
         webbrowser.open(url)
