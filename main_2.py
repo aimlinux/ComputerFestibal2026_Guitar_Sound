@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import random
+import webbrowser
 import pygame.midi
 import time
 import threading
@@ -14,6 +15,7 @@ import os
 import sys 
 import pyautogui
 
+url = "github.com/aimlinux/Guitar_Sound"
 
 # ---------- データ定義 ----------
 DIATONIC_MAJOR = {
@@ -278,6 +280,7 @@ class TitleScreen:
         )
         subtitle.place(relx=0.5, rely=0.4, anchor="center")
 
+        # startボタン
         start_btn = tb.Button(
             self.frame,
             text="Start",
@@ -287,6 +290,27 @@ class TitleScreen:
         )
         start_btn.place(relx=0.5, rely=0.6, anchor="center")
 
+        # optionsボタン
+        option_btn = tb.Button(
+            self.frame,
+            text="Options",
+            bootstyle="info",
+            width=30,
+            command=self.open_options
+        )
+        option_btn.place(relx=0.5, rely=0.7, anchor="center")
+
+        # downloadボタン
+        download_btn = tb.Button(
+            self.frame,
+            text="GitHub",
+            bootstyle="secondary",
+            width=30,
+            command=self.download_program
+        )
+        download_btn.place(relx=0.5, rely=0.8, anchor="center")
+
+        # Exitボタンも追加（タイトル画面からの退出用）
         exit_btn = tb.Button(
             self.frame,
             text="Exit",
@@ -294,7 +318,7 @@ class TitleScreen:
             width=30,
             command=self.exit
         )
-        exit_btn.place(relx=0.5, rely=0.7, anchor="center")
+        exit_btn.place(relx=0.5, rely=0.9, anchor="center")
 
     def update_frame(self):
         if not self.cap.isOpened():
@@ -325,6 +349,12 @@ class TitleScreen:
         self.cap.release()
         self.frame.destroy()
         self.start_callback()
+
+    def open_options(self):
+        messagebox.showinfo("Options", "オプションは現在利用できません。")
+
+    def download_program(self):
+        webbrowser.open(url)
 
     def exit(self):
         self.show_exit_dialog()
