@@ -20,7 +20,7 @@ import json
 # ---------- 定数定義 ---------
 url = "github.com/aimlinux/Guitar_Sound"
 
-main_theme = "darkly"  # 初期テーマを変数で管理
+main_theme = "vapor"  # 初期テーマを変数で管理
 
 # ---------- データ定義 ----------
 DIATONIC_MAJOR = {
@@ -490,7 +490,7 @@ class TitleScreen:
             overlay.destroy()
 
         exit_btn = tb.Button(btn_frame, text="Exit", bootstyle="danger", width=12, command=confirm)
-        cancel_btn = tb.Button(btn_frame, text="Cancel", bootstyle="secondary-outline", width=12, command=cancel)
+        cancel_btn = tb.Button(btn_frame, text="Cancel", bootstyle="success", width=12, command=cancel)
 
         cancel_btn.pack(side="left", padx=10)
         exit_btn.pack(side="left", padx=10)
@@ -514,8 +514,9 @@ class TitleScreen:
 
 # ---------- GUI ----------
 class ChordApp:
-    def __init__(self, root):
+    def __init__(self, root, start_main):
         self.root = root
+        self.start_main = start_main  # ★超重要
         self.play_thread = None
         self.play_flag = threading.Event()
         self.build_ui()
@@ -553,6 +554,27 @@ class ChordApp:
         self.midi_var = tk.StringVar(value="(Auto)")
         self.midi_menu = tb.Combobox(control_frame, textvariable=self.midi_var, values=[], width=24, state="readonly", bootstyle="info")
         self.midi_menu.grid(row=1, column=5, padx=6)
+
+        # GitHubに飛ぶボタン
+        self.github_btn = tb.Button(
+            control_frame, 
+            text="GitHub", 
+            bootstyle="info", 
+            width=20, 
+            padding=(20, 14), 
+            command=self.download_program)
+        self.github_btn.grid(row=0, column=6, rowspan=2, padx=12)
+        
+
+        # タイトル画面に戻るボタン
+        self.back_btn = tb.Button(
+            control_frame, 
+            text="Back to title", 
+            bootstyle="success", 
+            width=20, 
+            padding=(20, 14), 
+            command=self.back_to_title)
+        self.back_btn.grid(row=0, column=7, rowspan=2, padx=12)
 
         # output frame
         output_frame = tb.Labelframe(self.root, text="Generated Progression", bootstyle="secondary")
@@ -826,7 +848,7 @@ class ChordApp:
             overlay.destroy()
 
         exit_btn = tb.Button(btn_frame, text="Exit", bootstyle="danger", width=12, command=confirm)
-        cancel_btn = tb.Button(btn_frame, text="Cancel", bootstyle="secondary-outline", width=12, command=cancel)
+        cancel_btn = tb.Button(btn_frame, text="Cancel", bootstyle="success", width=12, command=cancel)
 
         cancel_btn.pack(side="left", padx=10)
         exit_btn.pack(side="left", padx=10)
@@ -837,6 +859,29 @@ class ChordApp:
 
         overlay.after(400, show_buttons)
 
+
+    def back_to_title(self):    
+        if not messagebox.askyesno("確認", "タイトルに戻りますか？"):
+            return
+
+        # ===== 動画・音・スレッド停止 =====
+        try:
+            if hasattr(self, "play_flag"):
+                self.play_flag.clear()
+        except Exception:
+            pass
+
+        # ===== 画面破棄 =====
+        if self.root.winfo_exists():
+            for w in self.root.winfo_children():
+                w.destroy()
+
+        # ===== TitleScreen 再生成 =====
+        TitleScreen(self.root, self.start_main)
+
+    #----ダウンロードボタンを押したときの処理----
+    def download_program(self):
+        webbrowser.open(url)
 
 def main():
     root = tb.Window(themename=main_theme) #初期テーマ
@@ -863,7 +908,7 @@ def main():
 
     # タイトル画面 → メイン画面切り替え
     def start_main():
-        app = ChordApp(root)
+        app = ChordApp(root, start_main)
         root.protocol("WM_DELETE_WINDOW", app.on_close)
 
     TitleScreen(root, start_main)
