@@ -12,7 +12,7 @@ from collections import OrderedDict
 import cv2
 from PIL import Image, ImageTk
 import os
-import sys 
+import sys
 import pyautogui
 import json
 
