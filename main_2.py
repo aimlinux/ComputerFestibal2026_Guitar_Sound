@@ -521,7 +521,7 @@ class TitleScreen:
 
 # ---------- GUI ----------
 class ChordApp:
-    def __init__(self, root, start_main):
+    def __init__(self, root, start_main): 
         self.root = root
         self.start_main = start_main  # ★超重要
         self.play_thread = None
