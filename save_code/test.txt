@@ -1,0 +1,9 @@
+Key: C    Style: Pop    Bars: 4
+
+Progression: | C | G | Am | F |
+
+C      → x32010
+G      → 320003
+Am     → x02210
+F      → 133211
+
