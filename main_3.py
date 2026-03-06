@@ -387,7 +387,7 @@ class TitleScreen:
         ).pack(pady=10)
 
         # ===== サンプル設定 =====
-        tb.Label(frame, text="（ここに設定項目を追加できます）").pack(pady=10)
+        # tb.Label(frame, text="（ここに設定項目を追加できます）").pack(pady=10)
 
         # 例：BGM音量（ダミー）
         tb.Label(frame, text="BGM Volume").pack(anchor="w", pady=(10, 0))
